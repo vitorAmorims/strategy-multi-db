@@ -43,3 +43,6 @@ sudo docker run \
 sudo docker exec -it mongodb \
     mongo --host localhost -u admin -p minhasenhasecreta --authenticationDatabase admin \
     --eval "db.getSiblingDB('herois').createUser({user: 'vitoramorim', pwd: 'minhasenhasecreta', roles: [{role: 'readWrite', db: 'herois'}]})"
+
+## ---- rodar npm test para dump default
+npm test
