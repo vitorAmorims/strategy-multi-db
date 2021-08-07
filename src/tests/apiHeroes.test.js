@@ -37,7 +37,7 @@ describe('Suite de teste da api Heroes', function () {
             method: 'GET',
             url: `/herois?skip=0&limit=${TAMANHO_LIMITE}`
         })
-        
+
         const msg = result.payload
         
         assert.deepEqual(msg, 'Erro interno no servidor')
