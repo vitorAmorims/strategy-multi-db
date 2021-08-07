@@ -8,7 +8,7 @@ class Icrud{
     create(item){
         throw new notImplementedException();
     }
-    read(query){
+    read(item){
         throw new notImplementedException();
     }
     update(id, item){
