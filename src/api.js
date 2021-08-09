@@ -4,8 +4,11 @@ const MongoDb =  require('./db/strategies/mongodb/mongodb')
 const HeroiSchemaMongoDb = require('./db/strategies/mongodb/schemas/heroisSchema');
 const Postgres = require('./db/strategies/postgres/postgres')
 const HeroiSchemaPostgres = require('./db/strategies/postgres/schemas/heroisSchema')
-
 const HeroRoutes = require('./routes/base/HeroRoutes')
+
+const HapiSwagger = require('hapi-swagger')
+const Vision = require('vision')
+const Inert = require('inert')
 
 function mapRoutes(instance, methods){
     // console.log('instance: ', instance)
@@ -20,10 +23,27 @@ const init = async () => {
     // const context = new Context(new Postgres(connection, HeroiSchemaPostgres))
     // console.log('context', context)
 
+    const swaggerOptions = {
+        info: {
+            title: 'API HEROIS - CursoNodeBR',
+            version: 'v1.0'
+        },
+        lang: 'pt'
+    }
+
     const server = Hapi.server({
         port: 5001,
         host: 'localhost'
     });
+
+    await server.register([
+        Vision,
+        Inert,
+        {
+            plugin: HapiSwagger,
+            options: swaggerOptions
+        }
+    ])
 
     server.route([
         ...mapRoutes(new HeroRoutes(context), HeroRoutes.methods())
@@ -31,6 +51,8 @@ const init = async () => {
 
     await server.start();
     console.log('Server running on %s', server.info.uri);
+
+    
 
     return server
 };

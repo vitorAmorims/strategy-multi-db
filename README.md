@@ -46,3 +46,5 @@ sudo docker exec -it mongodb \
 
 ## ---- rodar npm test para dump default
 npm test
+
+## ---- localhost:5001/documentation para ver documentação swagger
