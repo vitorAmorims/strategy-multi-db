@@ -1,4 +1,5 @@
 const Joi = require('joi');
+const Boom = require('boom');
 const BaseRoute = require('./BaseRoute')
 
 const failAction = (request, h, erro) => {
@@ -44,7 +45,7 @@ class HeroRoutes extends BaseRoute{
                     return this.db.read(nome ? query : {}, skip, limit)
                 }catch(error){
                     console.log('Algum erro', error);
-                    return 'Erro interno no servidor'
+                    return Boom.internal()
                 }
                 
             }
@@ -73,7 +74,7 @@ class HeroRoutes extends BaseRoute{
                     }
                 }catch(err){
                     console.log('Algum erro', err)
-                    return 'Aconteceu erro interno ao cadastrar'
+                    return Boom.internal()
                 }
             }
 
@@ -107,11 +108,7 @@ class HeroRoutes extends BaseRoute{
 
                     const result = await this.db.update(id, data)
                 
-                    if (result.nModified !== 1) {
-                        return {
-                            message: 'Não foi possível atualizar!'
-                        }
-                    }
+                    if (result.nModified !== 1) return Boom.preconditionFailed('Id não encontrado no banco!')
                     
                     return {
                         message: 'Atualização realizada com sucesso'
@@ -119,7 +116,7 @@ class HeroRoutes extends BaseRoute{
 
                 }catch(err){
                     console.log('algum erro', err)
-                    return 'Aconteceu erro interno ao atualizar'
+                    return Boom.internal()
                 }
             }
         }
@@ -143,15 +140,14 @@ class HeroRoutes extends BaseRoute{
                     
 
                     if (result.n !== 1)
-                        return {
-                            message: 'Não foi possivel remover o item'
-                        }
+                        return Boom.preconditionFailed('Id não encontrado no banco!')
+                    
                     return {
                         message: 'Heroi removido com sucesso!'
                     }
                 }catch(err){
                     console.log('algum erro', err)
-                    return 'Erro interno'
+                    return Boom.internal()
                 }
             }
         }

@@ -2,13 +2,13 @@ const assert = require("assert");
 const api = require("../api");
 let app = {};
 const MOCK_HEROI_CADASTRAR = {
-    nome: 'Lucas capitao cueca',
-    poder: 'Molhar o colchão'
-}
+  nome: "Lucas capitao cueca",
+  poder: "Molhar o colchão",
+};
 const MOCK_HEROI_DEFAULT = {
-    nome: 'Lanterna Verde',
-    poder: 'O poder do anel'
-}
+  nome: "Lanterna Verde",
+  poder: "O poder do anel",
+};
 
 let MOCK_ID;
 
@@ -16,10 +16,10 @@ describe("Suite de teste da api Heroes", function () {
   this.beforeAll(async () => {
     app = await api;
     const dados = await app.inject({
-        method: 'POST',
-        url: '/herois',
-        payload: MOCK_HEROI_DEFAULT
-    })
+      method: "POST",
+      url: "/herois",
+      payload: MOCK_HEROI_DEFAULT,
+    });
     const dadosObject = JSON.parse(dados.payload);
     MOCK_ID = dadosObject.data._id;
     // console.log(MOCK_ID);
@@ -92,62 +92,106 @@ describe("Suite de teste da api Heroes", function () {
     assert.deepStrictEqual(statusCode, 200);
     assert.ok(nome === objectData[0].nome);
   });
-  it('cadastrar POST /herois', async () => {
+  it("cadastrar POST /herois", async () => {
     const result = await app.inject({
-        method: "POST",
-        url: `/herois`,
-        payload: MOCK_HEROI_CADASTRAR
+      method: "POST",
+      url: `/herois`,
+      payload: MOCK_HEROI_CADASTRAR,
     });
     // console.log('resultado', result.payload)
-    const statusCode = result.statusCode
-    const {data, message} = JSON.parse(result.payload)
-    
-    assert.ok(statusCode === 200)
-    assert.notStrictEqual(data._id, undefined)
-    assert.deepStrictEqual(message, 'Cadastro realizado com sucesso')
+    const statusCode = result.statusCode;
+    const { data, message } = JSON.parse(result.payload);
 
-  })
-  it('Deve atualizar PATCH /herois', async function () {
+    assert.ok(statusCode === 200);
+    assert.notStrictEqual(data._id, undefined);
+    assert.deepStrictEqual(message, "Cadastro realizado com sucesso");
+  });
+  it("Deve atualizar PATCH /herois", async function () {
     const MOCK_HEROI_ATUALIZAR = {
-        poder: "Voar"
-    }
+      poder: "Voar",
+    };
     const result = await app.inject({
-        method: "PATCH",
-        url: `/herois/${MOCK_ID}`,
-        payload: JSON.stringify(MOCK_HEROI_ATUALIZAR)
+      method: "PATCH",
+      url: `/herois/${MOCK_ID}`,
+      payload: JSON.stringify(MOCK_HEROI_ATUALIZAR),
     });
-    const statusCode = result.statusCode
+    const statusCode = result.statusCode;
     const data = JSON.parse(result.payload);
     // console.log('result', result.payload);
     assert.ok(statusCode === 200);
-    assert.deepStrictEqual(data.message, 'Atualização realizada com sucesso')
-  })
-  it('Não deve atualizar PATCH /herois/:id', async () => {
-    MOCK_ID = '61114ddc855c7f76c33b6497'
+    assert.deepStrictEqual(data.message, "Atualização realizada com sucesso");
+  });
+  it("Não deve atualizar PATCH /herois/:id", async () => {
+    MOCK_ID = "61114ddc855c7f76c33b6497";
     const MOCK_HEROI_ATUALIZAR = {
-        poder: "LASER"
-    }
+      poder: "LASER",
+    };
     const result = await app.inject({
-        method: "PATCH",
-        url: `/herois/${MOCK_ID}`,
-        payload: JSON.stringify(MOCK_HEROI_ATUALIZAR)
+      method: "PATCH",
+      url: `/herois/${MOCK_ID}`,
+      payload: JSON.stringify(MOCK_HEROI_ATUALIZAR),
     });
-    const statusCode = result.statusCode
-    const data = JSON.parse(result.payload)
-
-    assert.ok(statusCode === 200);
-    assert.deepStrictEqual(data.message, 'Não foi possível atualizar!')
-  })
-  it('Deve deletar DELETE /herois/:id', async function () {
-    const _id = MOCK_ID
-    const result = await app.inject({
-        method: "DELETE",
-        url: `/herois/${_id}`
-    });
-    
     const statusCode = result.statusCode;
+    const dataResult = JSON.parse(result.payload);
 
-    assert.ok(statusCode === 200)
+    const expected = JSON.parse(
+      '{"statusCode":412,"error":"Precondition Failed","message":"Id não encontrado no banco!"}'
+    );
 
+    assert.ok(statusCode === 412);
+    assert.deepStrictEqual(dataResult, expected);
+  });
+  it("Deve deletar DELETE /herois/:id", async function () {
+    const resultAll = await app.inject({
+        method: "GET",
+        url: `/herois?nome=Lanterna Verde`,
+    });
+    const firstHeroi = JSON.parse(resultAll.payload);
+    const _id = firstHeroi[0]._id
+
+    const result = await app.inject({
+      method: "DELETE",
+      url: `/herois/${_id}`,
+    });
+    const statusCode = result.statusCode;
+    
+    assert.ok(statusCode === 200);
+  });
+  it('Não deve deletetar DELETE /herois/:id', async () => {
+      const _id = "61114ddc855c7f76c33b6497";
+      const result = await app.inject({
+        method: "DELETE",
+        url: `/herois/${_id}`,
+      });
+    //   console.log('result delete não', result);
+      const statusCode = result.statusCode;
+      const dadosResult = JSON.parse(result.payload)
+      const expected = {
+        statusCode: 412,
+        error: 'Precondition Failed',
+        message: 'Id não encontrado no banco!'
+      }
+        
+      assert.ok(statusCode === 412);
+      assert.deepStrictEqual(dadosResult, expected);
   })
+  it('Não deve deletetar com id inválido /herois/:id', async () => {
+    const _id = "INVALIDO";
+    const result = await app.inject({
+      method: "DELETE",
+      url: `/herois/${_id}`,
+    });
+    // console.log('result delete não', result);
+    const statusCode = result.statusCode;
+    const dadosResult = JSON.parse(result.payload)
+    const expected = {
+        statusCode: 500,
+        error: 'Internal Server Error',
+        message: 'An internal server error occurred'
+    }
+      
+    assert.ok(statusCode === 500);
+    assert.deepStrictEqual(dadosResult, expected);
+})
+
 });

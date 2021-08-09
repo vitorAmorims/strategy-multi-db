@@ -12,6 +12,7 @@
   "license": "ISC",
   "dependencies": {
     "@hapi/joi": "^17.1.1",
+    "boom": "^7.3.0",
     "hapi": "^17.0.1",
     "joi": "14.3.0",
     "mongoose": "^5.13.5",
