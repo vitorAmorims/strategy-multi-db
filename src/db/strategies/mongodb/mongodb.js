@@ -44,7 +44,7 @@ class MongoDBAbstract extends ICrud {
     return this._schema.find(item).skip(Nskip).limit(Nlimit)
   }
   async update(id, item){
-    await this._schema.updateOne({ _id: id }, { $set: item }).catch(
+    return await this._schema.updateOne({ _id: id }, { $set: item }).catch(
       error => {
          console.log(error);
        }
