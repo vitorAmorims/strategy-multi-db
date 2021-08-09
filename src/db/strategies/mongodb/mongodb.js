@@ -51,12 +51,16 @@ class MongoDBAbstract extends ICrud {
     );
   }
   async delete(id){
-    const result = await this._schema.deleteOne({ _id: id }).catch(
-      error => {
-        console.log(error);
-      }
-    )
+    const result = await this._schema.deleteOne({ _id: id })
     return result
+    // return await this._schema.findByIdAndDelete(id, function (err, docs) {
+    //   if (err){
+    //       console.log(err)
+    //   }
+    //   else{
+    //       console.log("Deleted : ", docs);
+    //   }
+    // });
   }  
 }
 

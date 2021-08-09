@@ -122,7 +122,7 @@ describe("Suite de teste da api Heroes", function () {
     assert.ok(statusCode === 200);
     assert.deepStrictEqual(data.message, 'Atualização realizada com sucesso')
   })
-  it('Não deve atualizar PATCH /herois', async () => {
+  it('Não deve atualizar PATCH /herois/:id', async () => {
     MOCK_ID = '61114ddc855c7f76c33b6497'
     const MOCK_HEROI_ATUALIZAR = {
         poder: "LASER"
@@ -137,5 +137,17 @@ describe("Suite de teste da api Heroes", function () {
 
     assert.ok(statusCode === 200);
     assert.deepStrictEqual(data.message, 'Não foi possível atualizar!')
+  })
+  it('Deve deletar DELETE /herois/:id', async function () {
+    const _id = MOCK_ID
+    const result = await app.inject({
+        method: "DELETE",
+        url: `/herois/${_id}`
+    });
+    
+    const statusCode = result.statusCode;
+
+    assert.ok(statusCode === 200)
+
   })
 });

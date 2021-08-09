@@ -124,7 +124,38 @@ class HeroRoutes extends BaseRoute{
             }
         }
     }
+    delete(){
+        return {
+            method: 'DELETE',
+            path: '/herois/{id}',
+            config: {
+                validate: {
+                    failAction: failAction,
+                    params: {
+                        id: Joi.string().required()
+                    }
+                }
+            },
+            handler: async (request, _h, _err) => {
+                try{
+                    const { id } = request.params
+                    const result = await this.db.delete(id)
+                    
 
+                    if (result.n !== 1)
+                        return {
+                            message: 'Não foi possivel remover o item'
+                        }
+                    return {
+                        message: 'Heroi removido com sucesso!'
+                    }
+                }catch(err){
+                    console.log('algum erro', err)
+                    return 'Erro interno'
+                }
+            }
+        }
+    }
 }
 
 module.exports = HeroRoutes
