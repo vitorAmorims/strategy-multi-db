@@ -50,6 +50,36 @@ class HeroRoutes extends BaseRoute{
             }
         }
     }
+    create(){
+        return {
+            method: 'POST',
+            path: '/herois',
+            config: {
+                validate: {
+                    failAction: failAction,
+                    query: {
+                        nome: Joi.string().min(2).max(100),
+                        poder: Joi.string().min(2).max(100)
+                    }
+                }
+            },
+            handler: async (request, h, err) => {
+                try{
+                    const {nome, poder} = request.payload;
+                    const data = await this.db.create({nome, poder})
+                    return {
+                        data,
+                        message: 'Cadastro realizado com sucesso'
+                    }
+                }catch(err){
+                    console.log('Algum erro', err)
+                    return 'Aconteceu erro interno ao cadastrar'
+                }
+            }
+
+        }
+
+    }
 }
 
 module.exports = HeroRoutes
