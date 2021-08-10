@@ -3,7 +3,7 @@ const Context = require('./db/strategies/base/contextStrategy')
 const MongoDb =  require('./db/strategies/mongodb/mongodb')
 const HeroiSchemaMongoDb = require('./db/strategies/mongodb/schemas/heroisSchema');
 const Postgres = require('./db/strategies/postgres/postgres')
-const HeroiSchemaPostgres = require('./db/strategies/postgres/schemas/heroisSchema')
+const UsuarioSchemaPostgres = require('./db/strategies/postgres/schemas/usuarioSchema')
 const HeroRoutes = require('./routes/base/HeroRoutes')
 const AuthRoutes = require('./routes/base/AuthRoute')
 
@@ -23,9 +23,9 @@ function mapRoutes(instance, methods){
 const init = async () => {
     const connection = MongoDb.connect()
     const context = new Context(new MongoDb(connection, HeroiSchemaMongoDb))
-    // const connection = await Postgres.connect()
-    // const context = new Context(new Postgres(connection, HeroiSchemaPostgres))
-    // console.log('context', context)
+    const connectionPostgres = await Postgres.connect()
+    const model = await Postgres.defineModel(connectionPostgres, UsuarioSchemaPostgres)
+    const contextPostgres = new Context(new Postgres(connectionPostgres, model))
 
     const swaggerOptions = {
         info: {
@@ -55,11 +55,18 @@ const init = async () => {
         // options: {
         //     expiresIn: 3600 *
         // }
-        validate: (dado, request) => {
+        validate: async (data, request) => {
+            const [result] = await contextPostgres.read({
+                username: data.username.toLowerCase(),
+            })
+
             //verificar se o usuário continua ativo
+            if(!result) return { isValid: false }
+            
             //veriricar se o usuario continua pagando
+
             return {
-                isValid: true //caso nao válido false
+                isValid: true
             }
         }
     })
@@ -68,7 +75,7 @@ const init = async () => {
 
     server.route([
         ...mapRoutes(new HeroRoutes(context), HeroRoutes.methods()),
-        ...mapRoutes(new AuthRoutes(JWT_SECRET), AuthRoutes.methods())
+        ...mapRoutes(new AuthRoutes(JWT_SECRET, contextPostgres), AuthRoutes.methods())
     ]);
 
     await server.start();
