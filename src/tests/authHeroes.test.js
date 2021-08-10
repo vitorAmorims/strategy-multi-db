@@ -31,6 +31,7 @@ describe('Auth test suite', function () {
         })
         const statusCode = result.statusCode;
         const data = JSON.parse(result.payload)
+        console.log(data);
 
         assert.deepStrictEqual(statusCode, 200)
         assert.ok(data.token.length > 10)
