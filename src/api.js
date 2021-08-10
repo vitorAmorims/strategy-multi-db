@@ -5,6 +5,7 @@ const HeroiSchemaMongoDb = require('./db/strategies/mongodb/schemas/heroisSchema
 const Postgres = require('./db/strategies/postgres/postgres')
 const HeroiSchemaPostgres = require('./db/strategies/postgres/schemas/heroisSchema')
 const HeroRoutes = require('./routes/base/HeroRoutes')
+const AuthRoutes = require('./routes/base/AuthRoute')
 
 const HapiSwagger = require('hapi-swagger')
 const Vision = require('vision')
@@ -15,6 +16,8 @@ function mapRoutes(instance, methods){
     // console.log('methods: ', methods)
     return methods.map(method => instance[method]())
 }
+
+const JWT_SECRET = 'minhasenhasecreta'
 
 const init = async () => {
     const connection = MongoDb.connect()
@@ -46,7 +49,8 @@ const init = async () => {
     ])
 
     server.route([
-        ...mapRoutes(new HeroRoutes(context), HeroRoutes.methods())
+        ...mapRoutes(new HeroRoutes(context), HeroRoutes.methods()),
+        ...mapRoutes(new AuthRoutes(JWT_SECRET), AuthRoutes.methods())
     ]);
 
     await server.start();

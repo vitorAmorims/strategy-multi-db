@@ -1,6 +1,8 @@
 const assert = require("assert");
 const api = require("../api");
 let app = {};
+const TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Imx1Y2FzYW1vcmltIiwiaWQiOjEsImlhdCI6MTYyODU5MTMwMX0.mk7cgm7eOLt8oj85MydhvEJbTacCc7yVyfotvejpYvc'
+
 const MOCK_HEROI_CADASTRAR = {
   nome: "Lucas capitao cueca",
   poder: "Molhar o colchão",
