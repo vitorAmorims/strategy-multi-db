@@ -11,13 +11,14 @@ const HapiSwagger = require('hapi-swagger')
 const Vision = require('vision')
 const Inert = require('inert')
 
+const JWT_SECRET = 'minhasenhasecreta'
+const HapiJwt = require('hapi-auth-jwt2')
+
 function mapRoutes(instance, methods){
     // console.log('instance: ', instance)
     // console.log('methods: ', methods)
     return methods.map(method => instance[method]())
 }
-
-const JWT_SECRET = 'minhasenhasecreta'
 
 const init = async () => {
     const connection = MongoDb.connect()
@@ -40,6 +41,7 @@ const init = async () => {
     });
 
     await server.register([
+        HapiJwt,
         Vision,
         Inert,
         {
@@ -48,6 +50,22 @@ const init = async () => {
         }
     ])
 
+    server.auth.strategy('jwt', 'jwt', {
+        key: JWT_SECRET,
+        // options: {
+        //     expiresIn: 3600 *
+        // }
+        validate: (dado, request) => {
+            //verificar se o usuário continua ativo
+            //veriricar se o usuario continua pagando
+            return {
+                isValid: true //caso nao válido false
+            }
+        }
+    })
+
+    server.auth.default('jwt')
+
     server.route([
         ...mapRoutes(new HeroRoutes(context), HeroRoutes.methods()),
         ...mapRoutes(new AuthRoutes(JWT_SECRET), AuthRoutes.methods())
@@ -55,8 +73,6 @@ const init = async () => {
 
     await server.start();
     console.log('Server running on %s', server.info.uri);
-
-    
 
     return server
 };
