@@ -17,18 +17,15 @@ class Postgres extends ICrud{
         }
     }
     static async connect(){
-        const connection = new Sequelize(
-            'heroes',
-            'vitoramorim',
-            'minhasenhasecreta',
-            {
-                host: 'localhost',
-                dialect: 'postgres',
-                quoteIdentifiers: false,
-                operatorAliases: false,
-                logging: false
+        const connection = new Sequelize(process.env.POSTGRES_URL, {
+            operatorAliases: false,
+            logging: false,
+            quoteIdentifiers: false,
+            ssl: process.env.SSL_DB,
+            dialectOptions: {
+                ssl: process.env.SSL_DB,
             }
-        )
+        })
         return connection
     }
     static async defineModel(connection, schema){
@@ -48,8 +45,9 @@ class Postgres extends ICrud{
     async read(item = {}){
         return this._schema.findAll({where: item, raw: true})
     }
-    async update(id, item){
-        const result = await this._schema.update(item, {where: {id: id}})
+    async update(id, item, upsert = false){
+        const fn = upsert ? 'upsert' : 'update';
+        const result = await this._schema[fn](item, {where: {id: id}})
         return result
     }
     async delete(id){

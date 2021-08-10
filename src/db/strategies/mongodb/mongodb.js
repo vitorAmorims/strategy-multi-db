@@ -22,7 +22,7 @@ class MongoDBAbstract extends ICrud {
   }
   static connect() {
     Mongoose.connect(
-      "mongodb://vitoramorim:minhasenhasecreta@localhost:27017/herois",
+      process.env.MONGODB_URL,
       {
         useNewUrlParser: true,
         useUnifiedTopology: true
@@ -44,19 +44,23 @@ class MongoDBAbstract extends ICrud {
     return this._schema.find(item).skip(Nskip).limit(Nlimit)
   }
   async update(id, item){
-    await this._schema.updateOne({ _id: id }, { $set: item }).catch(
+    return await this._schema.updateOne({ _id: id }, { $set: item }).catch(
       error => {
          console.log(error);
        }
     );
   }
   async delete(id){
-    const result = await this._schema.deleteOne({ _id: id }).catch(
-      error => {
-        console.log(error);
-      }
-    )
+    const result = await this._schema.deleteOne({ _id: id })
     return result
+    // return await this._schema.findByIdAndDelete(id, function (err, docs) {
+    //   if (err){
+    //       console.log(err)
+    //   }
+    //   else{
+    //       console.log("Deleted : ", docs);
+    //   }
+    // });
   }  
 }
 
