@@ -22,17 +22,17 @@ describe("Suite de teste da api Heroes", function () {
     app = await api;
     const dados = await app.inject({
       method: "POST",
-      url: "/herois",
       headers,
+      url: "/herois",
       payload: MOCK_HEROI_DEFAULT,
     });
     const dadosObject = JSON.parse(dados.payload);
     MOCK_ID = dadosObject.data._id;
-    // console.log(MOCK_ID);
   });
   it("listar /herois", async () => {
     const result = await app.inject({
       method: "GET",
+      headers,
       url: "/herois?skip=0&limit=10",
       headers,
     });

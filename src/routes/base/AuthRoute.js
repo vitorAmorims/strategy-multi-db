@@ -29,7 +29,7 @@ class AuthRoutes extends BaseRoute {
                 description: 'Obter token',
                 notes: 'faz login com user e senha do banco',
                 validate: {
-                    failAction: failAction,
+                    failAction,
                     payload: {
                         username: Joi.string().required(),
                         password: Joi.string().required()
@@ -39,14 +39,18 @@ class AuthRoutes extends BaseRoute {
             handler: async (request, _h, _err) => {
                 try{
                     const { username, password } = request.payload
+                    // console.log('password', password)
                     const [usuario] = await this.db.read({
                         username: username.toLowerCase()
                     })
+                    
                     if(!usuario) return Boom.unauthorized('O usuario informado não existe')
                     // if (username.toLowerCase() !== USER.username || password.toLowerCase() !== USER.password) {
                     //     return Boom.unauthorized()
                     // }
+                    
                     const match = await PasswordHelper.comparePassword(password, usuario.password)
+                    
                     if (!match) return Boom.unauthorized('Usuário ou Senha inválida')
 
                     const token = JWT.sign({username, id: usuario.id}, this.secret)
