@@ -104,4 +104,3 @@ process.on('unhandledRejection', (err) => {
 });
 
 module.exports = init();
-// pendente subir
