@@ -24,7 +24,7 @@ const HapiSwagger = require('hapi-swagger')
 const Vision = require('vision')
 const Inert = require('inert')
 
-const JWT_SECRET = process.env.JWT_SECRET
+const JWT_SECRET = process.env.JWT_KEY
 const HapiJwt = require('hapi-auth-jwt2')
 
 function mapRoutes(instance, methods){
