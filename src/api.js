@@ -50,7 +50,7 @@ const init = async () => {
     }
 
     const server = Hapi.server({
-        port: process.env.PORT || 5000 || '0.0.0.0',
+        port: process.env.PORT || '0.0.0.0',
         host: 'localhost'
     });
 
