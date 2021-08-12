@@ -9,7 +9,7 @@
   "main": "index.js",
   "scripts": {
     "preinstall": "npm i -g cross-env && npm i -g pm2",
-    "test": "mocha --timeout 10000 src/tests/*.js",
+    "test": "nyc --reporter=html mocha --timeout 10000 --exit src/tests/*.test.js",
     "test:prod": "cross-env NODE_ENV=prod npm t",
     "test:watch": "mocha src/tests/*.js -w",
     "prod": "cross-env NODE_ENV=prod node src/api.js",
@@ -39,6 +39,7 @@
     "vision": "5.4.3"
   },
   "devDependencies": {
-    "mocha": "^9.0.3"
+    "mocha": "^9.0.3",
+    "nyc": "^15.1.0"
   }
 }
