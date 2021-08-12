@@ -9,6 +9,7 @@
     "test:prod": "cross-env NODE_ENV=prod npm t",
     "test:watch": "mocha src/tests/*.js -w",
     "prod": "cross-env NODE_ENV=prod node src/api.js",
+    "postinstall": "npm run build",
     "start": "cross-env NODE_ENV=prod pm2-runtime src/api.js"
   },
   "keywords": [],
