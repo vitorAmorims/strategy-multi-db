@@ -4,12 +4,12 @@
   "description": "docker run \\   --name postgres \\   -e POSTGRES_USER=vitoramorim \\   -e POSTGRES_PASSWORD=minhasenhasecreta \\   -e POSTGRES_DB=heroes \\   -p 5432:5432 \\   -d \\   postgres",
   "main": "index.js",
   "scripts": {
-    "preinstall": "npm i -g cross-env",
+    "preinstall": "npm i -g cross-env pm2",
     "test": "mocha --timeout 10000 src/tests/*.js",
     "test:prod": "cross-env NODE_ENV=prod npm t",
     "test:watch": "mocha src/tests/*.js -w",
     "prod": "cross-env NODE_ENV=prod node src/api.js",
-    "start": "cross-env NODE_ENV=prod node src/api.js"
+    "start": "cross-env NODE_ENV=prod pm-2-runtime src/api.js"
   },
   "keywords": [],
   "author": "",
@@ -18,6 +18,7 @@
     "@hapi/joi": "^17.1.1",
     "bcrypt": "^5.0.1",
     "boom": "^7.3.0",
+    "cross-env": "^7.0.3",
     "crossenv": "0.0.2-security",
     "dotenv": "^10.0.0",
     "hapi": "^17.0.1",
@@ -29,6 +30,7 @@
     "mongoose": "^5.13.5",
     "pg": "^8.7.1",
     "pg-hstore": "^2.3.4",
+    "pm2": "^5.1.0",
     "sequelize": "^6.6.5",
     "vision": "5.4.3"
   },
