@@ -63,3 +63,4 @@ describe('mongoDB Strategy suite de testes', function (){
         assert.deepStrictEqual(resultDeleted.n, 1)
     })
 })
+// ao Senhor, toda honra e toda glória!!
